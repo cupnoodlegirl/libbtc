@@ -351,13 +351,15 @@ btc_bool btc_node_group_connect_next_nodes(btc_node_group* group)
 {
     btc_bool connected_at_least_to_one_node = false;
     int connect_amount = group->desired_amount_connected_nodes - btc_node_group_amount_of_connected_nodes(group, NODE_CONNECTED);
-    if (connect_amount <= 0)
+    if (connect_amount <= 0) {
         return true;
+    }
 
     connect_amount = connect_amount*3;
     /* search for a potential node that has not errored and is not connected or in connecting state */
     for (size_t i = 0; i < group->nodes->len; i++) {
         btc_node* node = vector_idx(group->nodes, i);
+        node->nodegroup->log_write_cb("[In btc_node_group_next_nodes] Now node id %d...\n", node->nodeid);
         if (
             !((node->state & NODE_CONNECTED) == NODE_CONNECTED) &&
             !((node->state & NODE_CONNECTING) == NODE_CONNECTING) &&
@@ -392,7 +394,7 @@ btc_bool btc_node_group_connect_next_nodes(btc_node_group* group)
                 return true;
         }
     }
-    /* node group misses a node to connect to */
+ 
     return connected_at_least_to_one_node;
 }
 
@@ -422,8 +424,10 @@ void btc_node_connection_state_changed(btc_node* node)
 
 void btc_node_send(btc_node* node, cstring* data)
 {
-    if ((node->state & NODE_CONNECTED) != NODE_CONNECTED)
+    if ((node->state & NODE_CONNECTED) != NODE_CONNECTED) {
+        node->nodegroup->log_write_cb("[In btc_node_send] no connected nodes\n");
         return;
+    }
 
     bufferevent_write(node->event_bev, data->str, data->len);
     char* dummy = data->str + 4;

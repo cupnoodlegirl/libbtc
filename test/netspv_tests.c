@@ -2,9 +2,9 @@
 #include <btc/block.h>
 #include <btc/net.h>
 #include <btc/netspv.h>
-#include <btc/utils.h>
-#include <btc/serialize.h>
-#include <btc/tx.h>
+//#include <btc/utils.h>
+//#include <btc/serialize.h>
+//#include <btc/tx.h>
 
 #include <unistd.h>
 
