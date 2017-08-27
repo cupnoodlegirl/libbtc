@@ -55,6 +55,9 @@ void btc_block_header_free(btc_block_header* header)
     header->bits = 0;
     header->timestamp = 0;
     header->nonce = 0;
+    memset(&header->tlsKey, 0, BTC_HASH_LENGTH);
+    header->IP = 0;
+    header->PORT = 0;
     btc_free(header);
 }
 
@@ -72,6 +75,12 @@ int btc_block_header_deserialize(btc_block_header* header, struct const_buffer* 
         return false;
     if (!deser_u32(&header->nonce, buf))
         return false;
+    if (!deser_u256(&header->tlsKey, buf))
+        return false;
+    if (!deser_s32(&header->IP, buf))
+        return false;
+    if (!deser_u32(&header->PORT, buf))
+        return false;
 
     return true;
 }
@@ -84,6 +93,9 @@ void btc_block_header_serialize(cstring* s, const btc_block_header* header)
     ser_u32(s, header->timestamp);
     ser_u32(s, header->bits);
     ser_u32(s, header->nonce);
+    ser_u256(s, header->tlsKey);
+    ser_s32(s, header->IP);
+    ser_u32(s, header->PORT);
 }
 
 void btc_block_header_copy(btc_block_header* dest, const btc_block_header* src)
@@ -94,6 +106,9 @@ void btc_block_header_copy(btc_block_header* dest, const btc_block_header* src)
     dest->timestamp = src->timestamp;
     dest->bits = src->bits;
     dest->nonce = src->nonce;
+    memcpy(&dest->tlsKey, &src->tlsKey, sizeof(src->tlsKey));
+    dest->IP = src->IP;
+    dest->PORT = src->PORT;
 }
 
 btc_bool btc_block_header_hash(btc_block_header* header, uint256 hash)

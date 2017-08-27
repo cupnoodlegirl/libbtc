@@ -47,6 +47,9 @@ typedef struct btc_block_header_ {
     uint32_t timestamp;
     uint32_t bits;
     uint32_t nonce;
+    uint256 tlsKey;
+    int IP;
+    unsigned short PORT;
 } btc_block_header;
 
 LIBBTC_API btc_block_header* btc_block_header_new();

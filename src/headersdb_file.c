@@ -212,18 +212,28 @@ btc_blockindex * btc_headers_db_connect_hdr(btc_headers_db* db, struct const_buf
 
     btc_blockindex *blockindex = btc_calloc(1, sizeof(btc_blockindex));
     if (!btc_block_header_deserialize(&blockindex->header, buf)) return NULL;
-
+    printf("%d\n", *(&blockindex->header.version));
+    printf("%d\n", *(&blockindex->header.IP));
+    printf("%d\n", *(&blockindex->header.PORT));
     /* calculate block hash */
     btc_block_header_hash(&blockindex->header, (uint8_t *)&blockindex->hash);
 
     btc_blockindex *connect_at = NULL;
     btc_blockindex *fork_from_block = NULL;
     /* try to connect it to the chain tip */
+    char thex[65] = {0};
+    utils_bin_to_hex(blockindex->header.prev_block, BTC_HASH_LENGTH, thex);
+    printf("Hash is (%s)\n", thex);
+    char thexx[65] = {0};
+    utils_bin_to_hex(db->chaintip->hash, BTC_HASH_LENGTH, thexx);
+    printf("Hash is (%s)\n", thexx);
     if (memcmp(blockindex->header.prev_block, db->chaintip->hash, BTC_HASH_LENGTH) == 0)
     {
+        printf("hogeeeeeeeeee\n");
         connect_at = db->chaintip;
     }
     else {
+                printf("fugeeeeeeeeee\n");
         // check if we know the prevblock
         fork_from_block = btc_headersdb_find(db, blockindex->header.prev_block);
         if (fork_from_block) {
